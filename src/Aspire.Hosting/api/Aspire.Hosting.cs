@@ -613,6 +613,8 @@ namespace Aspire.Hosting
     {
         string FilePath { get; }
 
+        bool IsAvailable { get; }
+
         void GetOrSetSecret(Microsoft.Extensions.Configuration.IConfigurationManager configuration, string name, System.Func<string> valueGenerator);
         System.Threading.Tasks.Task SaveStateAsync(System.Text.Json.Nodes.JsonObject state, System.Threading.CancellationToken cancellationToken = default);
         bool TrySetSecret(string name, string value);
@@ -713,13 +715,14 @@ namespace Aspire.Hosting
     public enum OtlpProtocol
     {
         Grpc = 0,
-        HttpProtobuf = 1
+        HttpProtobuf = 1,
+        HttpJson = 2
     }
 
     [System.Diagnostics.CodeAnalysis.Experimental("ASPIREINTERACTION001", UrlFormat = "https://aka.ms/aspire/diagnostics/{0}")]
     public sealed partial class ParameterProcessor
     {
-        public ParameterProcessor(ApplicationModel.ResourceNotificationService notificationService, ApplicationModel.ResourceLoggerService loggerService, IInteractionService interactionService, Microsoft.Extensions.Logging.ILogger<ParameterProcessor> logger, DistributedApplicationExecutionContext executionContext, Pipelines.IDeploymentStateManager deploymentStateManager) { }
+        public ParameterProcessor(ApplicationModel.ResourceNotificationService notificationService, ApplicationModel.ResourceLoggerService loggerService, IInteractionService interactionService, Microsoft.Extensions.Logging.ILogger<ParameterProcessor> logger, DistributedApplicationExecutionContext executionContext, Pipelines.IDeploymentStateManager deploymentStateManager, IUserSecretsManager userSecretsManager) { }
 
         public System.Threading.Tasks.Task InitializeParametersAsync(ApplicationModel.DistributedApplicationModel model, bool waitForResolution = false, System.Threading.CancellationToken cancellationToken = default) { throw null; }
 
@@ -1369,6 +1372,8 @@ namespace Aspire.Hosting.ApplicationModel
 
         public System.Threading.CancellationToken CancellationToken { get { throw null; } }
 
+        public Publishing.ContainerImageDestination? Destination { get { throw null; } set { } }
+
         public DistributedApplicationExecutionContext? ExecutionContext { get { throw null; } }
 
         public Publishing.ContainerImageFormat? ImageFormat { get { throw null; } set { } }
@@ -1535,6 +1540,8 @@ namespace Aspire.Hosting.ApplicationModel
 
         public string ValueExpression { get { throw null; } }
 
+        System.Threading.Tasks.ValueTask<string?> IValueProvider.GetValueAsync(ValueProviderContext context, System.Threading.CancellationToken cancellationToken) { throw null; }
+
         System.Threading.Tasks.ValueTask<string?> IValueProvider.GetValueAsync(System.Threading.CancellationToken cancellationToken) { throw null; }
     }
 
@@ -1623,6 +1630,7 @@ namespace Aspire.Hosting.ApplicationModel
         ReferenceExpression? IContainerRegistry.Repository { get { throw null; } }
     }
 
+    [System.Diagnostics.DebuggerDisplay("{DebuggerToString(),nq}")]
     public partial class ContainerResource : Resource, IResourceWithEnvironment, IResource, IResourceWithArgs, IResourceWithEndpoints, IResourceWithWaitSupport, IResourceWithProbes, IComputeResource
     {
         public ContainerResource(string name, string? entrypoint = null) : base(default!) { }
@@ -1733,6 +1741,7 @@ namespace Aspire.Hosting.ApplicationModel
 
         public DistributedApplicationModel(System.Collections.Generic.IEnumerable<IResource> resources) { }
 
+        [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.RootHidden)]
         public IResourceCollection Resources { get { throw null; } }
     }
 
@@ -1963,6 +1972,7 @@ namespace Aspire.Hosting.ApplicationModel
         public EndpointReferenceExpression Property(EndpointProperty property) { throw null; }
     }
 
+    [System.Diagnostics.DebuggerDisplay("EndpointExpression = {ValueExpression}, Property = {Property}, Endpoint = {Endpoint.EndpointName}")]
     public partial class EndpointReferenceExpression : IManifestExpressionProvider, IValueProvider, IValueWithReferences
     {
         public EndpointReferenceExpression(EndpointReference endpointReference, EndpointProperty property) { }
@@ -2029,6 +2039,7 @@ namespace Aspire.Hosting.ApplicationModel
         public required string WorkingDirectory { get { throw null; } set { } }
     }
 
+    [System.Diagnostics.DebuggerDisplay("Type = {GetType().Name,nq}, Name = {Name}, Command = {Command}")]
     public partial class ExecutableResource : Resource, IResourceWithEnvironment, IResource, IResourceWithArgs, IResourceWithEndpoints, IResourceWithWaitSupport, IResourceWithProbes, IComputeResource
     {
         public ExecutableResource(string name, string command, string workingDirectory) : base(default!) { }
@@ -2684,6 +2695,7 @@ namespace Aspire.Hosting.ApplicationModel
         Liveness = 2
     }
 
+    [System.Diagnostics.DebuggerDisplay("{DebuggerToString(),nq}")]
     public partial class ProjectResource : Resource, IResourceWithEnvironment, IResource, IResourceWithArgs, IResourceWithServiceDiscovery, IResourceWithEndpoints, IResourceWithWaitSupport, IResourceWithProbes, IComputeResource, IContainerFilesDestinationResource
     {
         public ProjectResource(string name) : base(default!) { }
@@ -2720,6 +2732,7 @@ namespace Aspire.Hosting.ApplicationModel
         All = 15
     }
 
+    [System.Diagnostics.DebuggerDisplay("ReferenceExpression = {ValueExpression}, Providers = {ValueProviders.Count}")]
     public partial class ReferenceExpression : IManifestExpressionProvider, IValueProvider, IValueWithReferences
     {
         internal ReferenceExpression() { }
@@ -2782,7 +2795,7 @@ namespace Aspire.Hosting.ApplicationModel
         [System.Obsolete("ReferenceExpression instances can't be used in interpolated string with a custom format. Duplicate the inner expression in-place.", true)]
         public void AppendFormatted(ReferenceExpression valueProvider, string format) { }
 
-        public void AppendFormatted(string? value, string? format) { }
+        public void AppendFormatted(string? value, string format) { }
 
         public void AppendFormatted(string? value) { }
 
@@ -3074,7 +3087,7 @@ namespace Aspire.Hosting.ApplicationModel
     {
         public ResourceNotificationService(Microsoft.Extensions.Logging.ILogger<ResourceNotificationService> logger, Microsoft.Extensions.Hosting.IHostApplicationLifetime hostApplicationLifetime, System.IServiceProvider serviceProvider, ResourceLoggerService resourceLoggerService) { }
 
-        [System.Obsolete("ResourceNotificationService now requires an IServiceProvider and ResourceLoggerService.\r\nUse the constructor that accepts an ILogger<ResourceNotificationService>, IHostApplicationLifetime, IServiceProvider and ResourceLoggerService.\r\nThis constructor will be removed in the next major version of Aspire.")]
+        [System.Obsolete("ResourceNotificationService now requires an IServiceProvider and ResourceLoggerService.\nUse the constructor that accepts an ILogger<ResourceNotificationService>, IHostApplicationLifetime, IServiceProvider and ResourceLoggerService.\nThis constructor will be removed in the next major version of Aspire.")]
         public ResourceNotificationService(Microsoft.Extensions.Logging.ILogger<ResourceNotificationService> logger, Microsoft.Extensions.Hosting.IHostApplicationLifetime hostApplicationLifetime) { }
 
         public void Dispose() { }
@@ -3785,6 +3798,8 @@ namespace Aspire.Hosting.Publishing
     [System.Diagnostics.CodeAnalysis.Experimental("ASPIREPIPELINES003", UrlFormat = "https://aka.ms/aspire/diagnostics/{0}")]
     public partial class ContainerImageBuildOptions
     {
+        public ContainerImageDestination? Destination { get { throw null; } init { } }
+
         public ContainerImageFormat? ImageFormat { get { throw null; } init { } }
 
         public string? ImageName { get { throw null; } init { } }
@@ -3794,6 +3809,13 @@ namespace Aspire.Hosting.Publishing
         public string? Tag { get { throw null; } init { } }
 
         public ContainerTargetPlatform? TargetPlatform { get { throw null; } init { } }
+    }
+
+    [System.Diagnostics.CodeAnalysis.Experimental("ASPIREPIPELINES003", UrlFormat = "https://aka.ms/aspire/diagnostics/{0}")]
+    public enum ContainerImageDestination
+    {
+        Registry = 0,
+        Archive = 1
     }
 
     [System.Diagnostics.CodeAnalysis.Experimental("ASPIREPIPELINES003", UrlFormat = "https://aka.ms/aspire/diagnostics/{0}")]
