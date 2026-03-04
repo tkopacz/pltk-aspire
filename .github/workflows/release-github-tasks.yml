@@ -70,6 +70,7 @@ permissions:
 
 jobs:
   authorize:
+    if: false
     name: Authorize
     runs-on: ubuntu-latest
     steps:
@@ -95,6 +96,7 @@ jobs:
           echo "✓ User ${{ github.actor }} is authorized (permission: $PERMISSION)"
 
   validate:
+    if: false
     name: Validate Inputs
     needs: authorize
     runs-on: ubuntu-latest
@@ -141,9 +143,9 @@ jobs:
           echo "✓ Commit SHA format is valid: $SHA"
 
   create-tag:
+    if: false
     name: Create Git Tag
     needs: validate
-    if: ${{ inputs.skip_tagging != true }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -199,13 +201,9 @@ jobs:
           fi
 
   create-release:
+    if: false
     name: Create GitHub Release
     needs: [validate, create-tag]
-    if: |
-      always() &&
-      needs.validate.result == 'success' &&
-      (needs.create-tag.result == 'success' || needs.create-tag.result == 'skipped') &&
-      inputs.skip_github_release != true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -297,13 +295,9 @@ jobs:
           fi
 
   create-merge-pr:
+    if: false
     name: Create Merge-Back PR
     needs: [validate, create-release]
-    if: |
-      always() &&
-      needs.validate.result == 'success' &&
-      (needs.create-release.result == 'success' || needs.create-release.result == 'skipped') &&
-      inputs.skip_merge_pr != true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -370,14 +364,9 @@ jobs:
             release-automation
 
   create-baseline-pr:
+    if: false
     name: Create Baseline Version PR
     needs: [validate, create-release]
-    if: |
-      always() &&
-      needs.validate.result == 'success' &&
-      (needs.create-release.result == 'success' || needs.create-release.result == 'skipped') &&
-      inputs.skip_baseline_pr != true &&
-      inputs.is_prerelease != true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -482,9 +471,9 @@ jobs:
             release-automation
 
   summary:
+    if: false
     name: Release Summary
     needs: [authorize, validate, create-tag, create-release, create-merge-pr, create-baseline-pr]
-    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Print Summary

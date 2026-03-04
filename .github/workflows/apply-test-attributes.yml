@@ -12,14 +12,7 @@ concurrency:
 
 jobs:
   quarantine_test:
-    if: >-
-      github.repository == 'dotnet/aspire' &&
-      (
-        startsWith(github.event.comment.body, '/quarantine-test ') ||
-        startsWith(github.event.comment.body, '/unquarantine-test ') ||
-        startsWith(github.event.comment.body, '/disable-test ') ||
-        startsWith(github.event.comment.body, '/enable-test ')
-      )
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

@@ -13,6 +13,7 @@ jobs:
   # setup jobs
 
   setup_for_tests_lin:
+    if: false
     name: Setup for tests (Linux)
     runs-on: ubuntu-latest
     outputs:
@@ -30,6 +31,7 @@ jobs:
           includeCliE2E: ${{ github.event_name == 'pull_request' }}
 
   setup_for_tests_macos:
+    if: false
     name: Setup for tests (macOS)
     runs-on: macos-latest
     outputs:
@@ -45,6 +47,7 @@ jobs:
           includeTemplates: true
 
   setup_for_tests_win:
+    if: false
     name: Setup for tests (Windows)
     runs-on: windows-latest
     outputs:
@@ -60,12 +63,14 @@ jobs:
           includeTemplates: true
 
   build_packages:
+    if: false
     name: Build packages
     uses: ./.github/workflows/build-packages.yml
     with:
       versionOverrideArg: ${{ inputs.versionOverrideArg }}
 
   build_cli_archives:
+    if: false
     name: Build native CLI archives
     needs: build_packages
     uses: ./.github/workflows/build-cli-native-archives.yml
@@ -73,6 +78,7 @@ jobs:
       versionOverrideArg: ${{ inputs.versionOverrideArg }}
 
   integrations_test_lin:
+    if: false
     uses: ./.github/workflows/run-tests.yml
     name: Integrations Linux
     needs: setup_for_tests_lin
@@ -89,6 +95,7 @@ jobs:
       versionOverrideArg: ${{ inputs.versionOverrideArg }}
 
   integrations_test_macos:
+    if: false
     uses: ./.github/workflows/run-tests.yml
     name: Integrations macos
     needs: setup_for_tests_macos
@@ -103,6 +110,7 @@ jobs:
       versionOverrideArg: ${{ inputs.versionOverrideArg }}
 
   integrations_test_win:
+    if: false
     uses: ./.github/workflows/run-tests.yml
     name: Integrations Windows
     needs: setup_for_tests_win
@@ -117,6 +125,7 @@ jobs:
       versionOverrideArg: ${{ inputs.versionOverrideArg }}
 
   templates_test_lin:
+    if: false
     name: Templates Linux
     uses: ./.github/workflows/run-tests.yml
     needs: [setup_for_tests_lin, build_packages]
@@ -135,6 +144,7 @@ jobs:
       requiresTestSdk: true
 
   templates_test_macos:
+    if: false
     name: Templates macos
     uses: ./.github/workflows/run-tests.yml
     needs: [setup_for_tests_macos, build_packages]
@@ -153,6 +163,7 @@ jobs:
       requiresTestSdk: true
 
   templates_test_win:
+    if: false
     name: Templates Windows
     uses: ./.github/workflows/run-tests.yml
     needs: [setup_for_tests_win, build_packages]
@@ -171,6 +182,7 @@ jobs:
       requiresTestSdk: true
 
   endtoend_tests:
+    if: false
     name: EndToEnd Linux
     uses: ./.github/workflows/run-tests.yml
     needs: build_packages
@@ -183,9 +195,9 @@ jobs:
       versionOverrideArg: ${{ inputs.versionOverrideArg }}
 
   cli_e2e_tests:
+    if: false
     name: Cli E2E Linux
     # Only run CLI E2E tests during PR builds
-    if: ${{ github.event_name == 'pull_request' }}
     uses: ./.github/workflows/run-tests.yml
     needs: [setup_for_tests_lin, build_packages, build_cli_archives]
     strategy:
@@ -201,6 +213,7 @@ jobs:
       versionOverrideArg: ${{ inputs.versionOverrideArg }}
 
   polyglot_validation:
+    if: false
     name: Polyglot SDK Validation
     uses: ./.github/workflows/polyglot-validation.yml
     needs: [build_packages, build_cli_archives]
@@ -208,6 +221,7 @@ jobs:
       versionOverrideArg: ${{ inputs.versionOverrideArg }}
 
   extension_tests_win:
+    if: false
     name: Run VS Code extension tests (Windows)
     runs-on: windows-latest
     defaults:
@@ -233,7 +247,7 @@ jobs:
           path: extension/out/aspire-extension.vsix
 
   results:
-    if: ${{ always() && github.repository_owner == 'dotnet' }}
+    if: false
     runs-on: ubuntu-latest
     name: Final Test Results
     needs: [

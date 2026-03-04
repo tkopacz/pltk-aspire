@@ -13,6 +13,7 @@ on:
 
 jobs:
   build_packages:
+    if: false
     name: Build packages
     runs-on: 8-core-ubuntu-latest
     outputs:
@@ -104,9 +105,9 @@ jobs:
           retention-days: 5
 
   upload_arch_specific_nugets:
+    if: false
     name: Upload arch-specific NuGets
     needs: build_packages
-    if: ${{ needs.build_packages.outputs.arch_rids != '[]' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

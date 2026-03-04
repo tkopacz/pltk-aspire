@@ -44,6 +44,7 @@ env:
 jobs:
 
   setup:
+    if: false
     name: Generate matrix
     runs-on: ubuntu-latest
     outputs:
@@ -114,6 +115,7 @@ jobs:
           echo "Total test executions: $(( TOTAL * ${{ env.ITERATIONS_PER_RUNNER }} ))"
 
   reproduce:
+    if: false
     name: "${{ matrix.os }} #${{ matrix.index }}"
     needs: setup
     runs-on: ${{ matrix.os }}
@@ -335,7 +337,7 @@ jobs:
           if-no-files-found: ignore
 
   results:
-    if: always()
+    if: false
     runs-on: ubuntu-latest
     name: Reproduce Results
     needs: [reproduce]

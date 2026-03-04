@@ -28,8 +28,8 @@ env:
 
 jobs:
   predict-issue-label:
+    if: false
     # Do not automatically run the workflow on forks outside the 'dotnet' org
-    if: ${{ github.event_name == 'workflow_dispatch' || github.repository_owner == 'dotnet' }}
     runs-on: ubuntu-latest
     permissions:
       issues: write

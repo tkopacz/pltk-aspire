@@ -44,6 +44,7 @@ run-name: "13.2 Release Burndown Report"
 
 jobs:
   activation:
+    if: false
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -210,6 +211,7 @@ jobs:
           retention-days: 1
 
   agent:
+    if: false
     needs: activation
     runs-on: ubuntu-latest
     permissions:
@@ -943,12 +945,12 @@ jobs:
           fi
 
   conclusion:
+    if: false
     needs:
       - activation
       - agent
       - safe_outputs
       - update_cache_memory
-    if: (always()) && (needs.agent.result != 'skipped')
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -1038,8 +1040,8 @@ jobs:
             await main();
 
   safe_outputs:
+    if: false
     needs: agent
-    if: ((!cancelled()) && (needs.agent.result != 'skipped')) && (needs.agent.outputs.detection_success == 'true')
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -1094,8 +1096,8 @@ jobs:
           if-no-files-found: warn
 
   update_cache_memory:
+    if: false
     needs: agent
-    if: always() && needs.agent.outputs.detection_success == 'true'
     runs-on: ubuntu-latest
     permissions: {}
     env:

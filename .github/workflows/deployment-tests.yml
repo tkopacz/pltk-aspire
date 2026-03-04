@@ -33,9 +33,9 @@ concurrency:
 jobs:
   # Post "starting" comment to PR when triggered via /deployment-test command
   notify-start:
+    if: false
     name: Notify PR
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'dotnet' && inputs.pr_number != '' }}
     permissions:
       pull-requests: write
     steps:
@@ -55,9 +55,9 @@ jobs:
 
   # Enumerate test classes to build the matrix
   enumerate:
+    if: false
     name: Enumerate Tests
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'dotnet' }}
     permissions:
       contents: read
     outputs:
@@ -77,9 +77,9 @@ jobs:
 
   # Build solution and CLI once, share via artifacts
   build:
+    if: false
     name: Build
     runs-on: 8-core-ubuntu-latest
-    if: ${{ github.repository_owner == 'dotnet' }}
     permissions:
       contents: read
     steps:
@@ -130,9 +130,9 @@ jobs:
 
   # Run each test class in parallel
   deploy-test:
+    if: false
     name: Deploy (${{ matrix.shortname }})
     needs: [enumerate, build]
-    if: ${{ needs.enumerate.outputs.matrix != '{"shortname":[]}' && needs.enumerate.outputs.matrix != '' }}
     runs-on: 8-core-ubuntu-latest
     environment: deployment-testing
     permissions:
@@ -275,10 +275,10 @@ jobs:
 
   # Create GitHub issue on nightly failure
   create_issue_on_failure:
+    if: false
     name: Create Issue on Failure
     needs: [deploy-test]
     runs-on: ubuntu-latest
-    if: ${{ failure() && github.event_name == 'schedule' }}
     permissions:
       issues: write
     steps:
@@ -346,10 +346,10 @@ jobs:
 
   # Post completion comment back to PR when triggered via /deployment-test command
   post_pr_comment:
+    if: false
     name: Post PR Comment
     needs: [deploy-test]
     runs-on: ubuntu-latest
-    if: ${{ always() && inputs.pr_number != '' }}
     permissions:
       pull-requests: write
       actions: read

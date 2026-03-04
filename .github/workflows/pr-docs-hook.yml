@@ -19,8 +19,8 @@ permissions:
 
 jobs:
   check-docs-needed:
+    if: false
     # Only run on the dotnet org to avoid running on forks
-    if: (github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch') && github.repository_owner == 'dotnet'
     runs-on: ubuntu-latest
 
     steps:

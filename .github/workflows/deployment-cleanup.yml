@@ -37,9 +37,9 @@ permissions:
 
 jobs:
   cleanup:
+    if: false
     name: Cleanup Azure Resources
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'dotnet' }}
     environment: deployment-testing
 
     steps:

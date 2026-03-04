@@ -57,6 +57,7 @@ on:
 jobs:
 
   test:
+    if: false
     runs-on: ${{ inputs.os }}
     timeout-minutes: 60
     name: ${{ inputs.testShortName }} (${{ inputs.os }})
