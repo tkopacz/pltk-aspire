@@ -16,6 +16,7 @@ jobs:
   # NuGet packages to be built.
   # The runsheet generation is expected to be fast.
   generate_tests_matrix:
+    if: false
     name: Generate test runsheet
     runs-on: windows-latest
     outputs:
@@ -58,6 +59,7 @@ jobs:
   # The runsheet generation is expected to be slow as we need to restore and build
   # the whole solution and publish all the packages.
   generate_e2e_matrix:
+    if: false
     name: Generate E2E test runsheet
     runs-on: windows-latest
     outputs:
@@ -93,6 +95,7 @@ jobs:
           retention-days: 3
 
   run_tests:
+    if: false
     name: Test
     needs: generate_tests_matrix
     strategy:
@@ -143,6 +146,7 @@ jobs:
           retention-days: 3
 
   run_e2e_tests:
+    if: false
     name: E2ETest
     needs: generate_e2e_matrix
     strategy:

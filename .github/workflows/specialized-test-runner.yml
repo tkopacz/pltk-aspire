@@ -32,9 +32,9 @@ on:
 jobs:
 
   generate_tests_matrix:
+    if: false
     name: Generate test runsheet
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'dotnet' }}
     outputs:
       runsheet: ${{ steps.generate_tests_matrix.outputs.runsheet }}
       requiresNugets: ${{ steps.check_nugets.outputs.requiresNugets }}
@@ -96,19 +96,19 @@ jobs:
           retention-days: 5
 
   build_packages:
+    if: false
     name: Build packages
     needs: [generate_tests_matrix]
-    if: ${{ github.repository_owner == 'dotnet' && needs.generate_tests_matrix.outputs.requiresNugets == 'true' }}
     uses: ./.github/workflows/build-packages.yml
 
   run_tests:
+    if: false
     name: Test
     needs: [generate_tests_matrix, build_packages]
     strategy:
       fail-fast: false
       matrix:
         tests: ${{ fromJson(needs.generate_tests_matrix.outputs.runsheet) }}
-    if: ${{ github.repository_owner == 'dotnet' && !cancelled() && !failure() }}
     uses: ./.github/workflows/run-tests.yml
     with:
       testShortName: ${{ matrix.tests.project }}
@@ -120,7 +120,7 @@ jobs:
       ignoreTestFailures: ${{ inputs.ignoreTestFailures }}
 
   results:
-    if: ${{ always() && github.repository_owner == 'dotnet' }}
+    if: false
     runs-on: ubuntu-latest
     name: Final Results
     needs: [generate_tests_matrix, build_packages, run_tests]

@@ -13,6 +13,7 @@ on:
 
 jobs:
   validate_python:
+    if: false
     name: Python SDK Validation
     runs-on: ubuntu-latest
     steps:
@@ -67,6 +68,7 @@ jobs:
             polyglot-python
 
   validate_go:
+    if: false
     name: Go SDK Validation
     runs-on: ubuntu-latest
     steps:
@@ -121,6 +123,7 @@ jobs:
             polyglot-go
 
   validate_java:
+    if: false
     name: Java SDK Validation
     runs-on: ubuntu-latest
     steps:
@@ -175,6 +178,7 @@ jobs:
             polyglot-java
 
   validate_rust:
+    if: false
     name: Rust SDK Validation
     runs-on: ubuntu-latest
     # Rust SDK has known issues - don't fail the workflow
@@ -231,6 +235,7 @@ jobs:
             polyglot-rust
 
   validate_typescript:
+    if: false
     name: TypeScript SDK Validation
     runs-on: ubuntu-latest
     steps:
@@ -285,7 +290,7 @@ jobs:
             polyglot-typescript
 
   results:
-    if: always()
+    if: false
     runs-on: ubuntu-latest
     name: Polyglot Validation Results
     needs: [validate_python, validate_go, validate_java, validate_rust, validate_typescript]

@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   promote-issues:
-    if: ${{ inputs.issues }}
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: "Promote Model for Issues"
@@ -38,7 +38,7 @@ jobs:
           backup_key: ${{ inputs.backup_key }}
 
   promote-pulls:
-    if: ${{ inputs.pulls }}
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: "Promote Model for Pull Requests"
